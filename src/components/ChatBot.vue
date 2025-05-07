@@ -48,8 +48,8 @@ onMounted(() => {
   // Cada 500ms verificamos si ya cargó el DOM
   const interval = setInterval(() => {
     const controls = document.querySelector('.chat-inputs-controls')
-    const stopSVG = `<img src="/src/assets/record.svg" alt="Stop" width="20" height="20" />`
-    const myMicSVG = `<img src="/src/assets/microphone.svg" alt="Record" width="20" height="20" />`
+    const stopSVG = `<img src="/record.svg" alt="Stop" width="20" height="20" />`
+    const myMicSVG = `<img src="/microphone.svg" alt="Record" width="20" height="20" />`
     if (controls) {
       clearInterval(interval)
 
