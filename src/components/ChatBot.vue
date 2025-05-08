@@ -2,6 +2,7 @@
 import '@n8n/chat/style.css'
 import { createChat } from '@n8n/chat'
 import { onMounted } from 'vue';
+import translate from '@/i18n/index';
 
 const props = defineProps({
     url: String
@@ -38,11 +39,32 @@ const insertMessageToChat = (chat, text, sender = 'bot', file = null) => {
     chat.config.globalProperties.$chat.messages.value.push(msg)
 }
 onMounted(() => {
+  // lang del navegador
+  const browserLanguage = navigator.language.split('-')[0];
+  // mensaje inicial y traduccion segun el lang. Por defecto sera el esp
+  const { initialMessages, i18n } = translate[browserLanguage] || translate['es']
+  
   const chatOptions = {
-    webhookUrl: props.url, //'https://gsatek.app.n8n.cloud/webhook/cb398a6b-c11d-434d-ad62-765d1cd88340/chat',
+    webhookUrl: props.url,
     chatSessionKey: 'sessionId',
     allowFileUploads: true,
+    initialMessages,
+    // defaultLanguage: 'es',
+    i18n: {
+      en: {
+        title: 'Hi there! 👋',
+        subtitle: "Start a chat. We're here to help you 24/7.",
+        footer: '',
+        getStarted: 'New Conversation',
+        inputPlaceholder: 'Type your question..',
+      },
+    }
   }
+  // asigna el lang por defecto para el widget del chat
+  chatOptions.defaultLanguage = browserLanguage
+  // asigna el objeto de la traduccion de un idioma concreto
+  chatOptions.i18n[browserLanguage] = i18n.default;
+  // crea el widget del chat
   const chat = createChat(chatOptions)
   
   // Cada 500ms verificamos si ya cargó el DOM

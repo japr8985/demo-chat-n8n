@@ -1,6 +1,9 @@
 <script setup>
+import { computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+
+const url = computed(() => import.meta.env.VITE_CHAT_URL)
 
 </script>
 
@@ -13,7 +16,7 @@ import HelloWorld from './components/HelloWorld.vue'
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <gsatek-chat url="https://gsatek.app.n8n.cloud/webhook/e692818e-1461-4420-b13b-51c7e2b95682/chat" />
+        <gsatek-chat :url="url" />
       </nav>
     </div>
   </header>
