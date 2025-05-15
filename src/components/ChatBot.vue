@@ -4,6 +4,7 @@ import { createChat } from '@n8n/chat'
 import { onMounted } from 'vue';
 import translate from '@/i18n/index';
 
+
 const props = defineProps({
     url: String
 })
@@ -38,7 +39,17 @@ const insertMessageToChat = (chat, text, sender = 'bot', file = null) => {
     
     chat.config.globalProperties.$chat.messages.value.push(msg)
 }
-onMounted(() => {
+const getIp = async () => {
+  if (!sessionStorage.getItem('ip')) {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const { ip } = await response.json();
+    sessionStorage.setItem('ip', ip)
+    return ip;
+  }
+  return sessionStorage.getItem('ip');
+}
+onMounted(async () => {
+  const IP = await getIp();
   // lang del navegador
   const browserLanguage = navigator.language.split('-')[0];
   // mensaje inicial y traduccion segun el lang. Por defecto sera el esp
@@ -49,6 +60,11 @@ onMounted(() => {
     chatSessionKey: 'sessionId',
     allowFileUploads: true,
     initialMessages,
+    metadata: {
+      region: Intl.DateTimeFormat().resolvedOptions().timeZone.split('/')[1],
+      ip: IP,
+      language: browserLanguage
+    },
     // defaultLanguage: 'es',
     i18n: {
       en: {
@@ -66,7 +82,6 @@ onMounted(() => {
   chatOptions.i18n[browserLanguage] = i18n.default;
   // crea el widget del chat
   const chat = createChat(chatOptions)
-  
   // Cada 500ms verificamos si ya cargó el DOM
   const interval = setInterval(() => {
     const controls = document.querySelector('.chat-inputs-controls')
