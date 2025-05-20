@@ -48,6 +48,20 @@ const getIp = async () => {
   }
   return sessionStorage.getItem('ip');
 }
+const createSessionId = () => {
+  return crypto.randomUUID().replace('-','');
+}
+const getSessionId = () => {
+  let sessionId = '';
+  if (!sessionStorage.getItem('sessionId')) {
+    sessionId = createSessionId();
+    sessionStorage.setItem('sessionId', sessionId)
+  } else {
+    sessionId = sessionStorage.getItem('sessionId')
+  }
+
+  return sessionId
+}
 onMounted(async () => {
   const IP = await getIp();
   // lang del navegador
@@ -58,6 +72,7 @@ onMounted(async () => {
   const chatOptions = {
     webhookUrl: props.url,
     chatSessionKey: 'sessionId',
+    sessionId: getSessionId(),
     allowFileUploads: true,
     initialMessages,
     metadata: {
